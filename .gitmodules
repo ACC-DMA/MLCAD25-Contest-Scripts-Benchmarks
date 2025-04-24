@@ -1,0 +1,3 @@
+[submodule "CircuitOps"]
+	path = CircuitOps
+	url = https://github.com/NVlabs/CircuitOps.git
