@@ -8,7 +8,7 @@ This GitHub repository has the public benchmarks for the 2025 MLCAD CAD Contest 
   - [*platform/ASAP7*](./platform/ASAP7): ASAP7 cell library for the designs.
   - [*src*](./src)
     - [*example*](./src/example): Example scripts showing how to use OpenROAD Python API and CircuitOps LPG to do operations.
-    - [*ir_tables_generator*](./src/ir_tables_generator): Python scripts to generate the intermediate files containing the updated timing values and capacitance values using OpenROAD after gate sizing. 
+    - [*IR_tables_generator*](./src/IR_tables_generator): Python scripts to generate the intermediate files containing the updated timing values and capacitance values using OpenROAD after gate sizing. 
     - [*evaluation*](./src/evaluation): Evaluation scripts for the contest and the evaluation method for users of the OpenROAD Python API.
     
 ## Materials for using OpenROAD's Python API and Nvidia's CircuitOps
