@@ -18,7 +18,7 @@ Make sure you have OpenROAD built locally. Run the following command to get the 
 
 ```
 # You can also import the "get_tables_OpenROAD_API" function from the "openroad_helpers.py" Python file to get the pandas DataFrame
-../../OpenROAD/build/src/openroad -python generate_tables.py -d <design name> -def_file <def file path> -w 1 
+../../OpenROAD/build/src/openroad -python generate_tables.py -d <design name> -def_file <def file path> -w 1 -out_dir <output directory>
 ```
 
 ## Intermediate file format
