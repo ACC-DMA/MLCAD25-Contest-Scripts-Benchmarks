@@ -14,7 +14,7 @@ Refer to this link to find [*examples*](https://github.com/NVlabs/CircuitOps/tre
 - Vt swaps
 - buffer insertion/deletion
 
-<img width="1000" alt="profile" src="../../etc/transformations.jpg">
+<img width="1000" alt="profile" src="../../etc/images/transformations.jpg">
 
   
 <i> Replace "The name of the benchmark" with the name of the provided benchmark. The default benchmark is <b>ac97_top</b> if the "--d" flag is not added.</i>
