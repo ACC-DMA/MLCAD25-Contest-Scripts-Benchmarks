@@ -67,12 +67,12 @@ cmake ..
 make -j
 ```
 ## Benchmark Statistics [Post global route metrics]
-|        Design        |   Gate Count   |    WNS (ns)   |    TNS (ns)   |Total Slew Violation Difference (ns)|Slew Violation Count|Total Load Capacitance Violation Difference (fF)|Capacitance Violation Count|Total Leakage (uW)|
-|:--------------------:|---------------:|--------------:|--------------:|--------------:|--------------:|--------------:|--------------:|--------------:|
-| NV_NVDLA_partition_m | 17,843| -0.37085|   -33.4492|   114.739868|   477| 484.75031|   9|      161.32320|
-| NV_NVDLA_partition_p | 60,698| -0.98996|  -3548.7955|   2198.47649| 15943| 9033.75589| 170|      590.82879|
-| aes_cipher_top       | 10,965| -0.27505|   -51.1362|   12.64665|   204| 11.06895|   5|      29.76257|
-| fpu                  | 19,725| -1.36038|    -65.9858|   25.41503|   147| 5.082252|   1|      19.25387|
+|        Design        |   Gate Count   |    WNS (ns)   |    TNS (ns)   |Total Slew Violation Difference (ns)|Slew Violation Count|Total Load Capacitance Violation Difference (fF)|Capacitance Violation Count|Total Leakage (uW)| Overflow |
+|:--------------------:|---------------:|--------------:|--------------:|--------------:|--------------:|--------------:|--------------:|--------------:|--------------:|
+| NV_NVDLA_partition_m | 17,843| -0.37085|   -33.4492|   114.739868|   477| 484.75031|   9|      161.32320|0|
+| NV_NVDLA_partition_p | 60,698| -0.98996|  -3548.7955|   2198.47649| 15943| 9033.75589| 170|      590.82879|0|
+| aes_cipher_top       | 10,965| -0.27505|   -51.1362|   12.64665|   204| 11.06895|   5|      29.76257|0|
+| fpu                  | 19,725| -1.36038|    -65.9858|   25.41503|   147| 5.082252|   1|      19.25387|0|
 
 
 (Reported by OpenSTA)
