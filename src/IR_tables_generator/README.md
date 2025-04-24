@@ -4,10 +4,17 @@ This directory contains Python scripts that generate pin and cell properties of 
 ## Run the script
 Make sure you have OpenROAD built locally. Run the following command to get the updated timing values:
 - Add the name of the benchmark with the <i>"-d"</i> flag.
+  - Default is ac97_top.
 - Add the technology node nae with the <i>"-t"</i> flag.
+  - Default is ASAP7.
 - Add the def file for which the properties has to be generated with the <i>"-def_file"</i> flag.
+  - Default is ac97_top_fp.def.gz.
 - Set <i>"-is_fp"</i> flag if you are reading a floorplan stage def.
+  - Default is True.
 - Set <i>"-w"</i> flag to store the IR tables as .csv files.
+  - Default is True.
+- Add <i>"-out_dir"</i> flag to provide the output directory path to store the IR tables.
+  - Default is IRs folder inside design directory.
 
 ```
 # You can also import the "get_tables_OpenROAD_API" function from the "openroad_helpers.py" Python file to get the pandas DataFrame
