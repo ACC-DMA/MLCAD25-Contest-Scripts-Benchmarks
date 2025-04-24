@@ -70,18 +70,18 @@ cmake ..
 make -j
 ```
 ## Benchmark Statistics [Post global route metrics]
-|        Design        |   Gate Count   |    WNS (ns)   |    TNS (ns)   |Total Slew Violation Difference (ns)|Slew Violation Count|Total Load Capacitance Violation Difference (fF)|Capacitance Violation Count|Total Leakage (uW)| Overflow |
-|:--------------------:|---------------:|--------------:|--------------:|--------------:|--------------:|--------------:|--------------:|--------------:|--------------:|
-| NV_NVDLA_partition_m | 17,843| -0.37085|   -33.4492|   114.739868|   477| 484.75031|   9|      161.32320| 0 |
-| NV_NVDLA_partition_p | 60,698| -0.98996|  -3548.7955|   2198.47649| 15943| 9033.75589| 170|      590.82879| 0 | 
-| aes_cipher_top       | 10,965| -0.27505|   -51.1362|   12.64665|   204| 11.06895|   5|      29.76257| 0 |
-| fpu                  | 19,725| -1.36038|    -65.9858|   25.41503|   147| 5.082252|   1|      19.25387| 0 |
-| ac97_top             | 8029 | -0.285| -138.454| 102.310 | 305| 0.000| 0| 82.793 | 0 |
 
+|Design              |Gate count|Clock period (ns)|WNS (ns)|TNS (ns)  |Total slew violation difference (ns)|Slew violation count|Total load capacitance violation difference (fF)|Capacitance violation count|Total leakge power (uW)|Total overflow|
+|--------------------|----------|-----------------|--------|----------|--------------------|--------------------|-------------------|-------------------|-----------------|--------|
+|ac97_top *            |8029      |0.08             |-0.108 |-84.999  |0.506              |15                  |0.000             |0                  |82.793          |0       |
+|aes_cipher_top      |10965     |0.26             |-0.221 |-45.155  |9.769              |183                 |6.589             |5                  |29.763          |0       |
+|NV_NVDLA_partition_m|17843     |0.40             |-0.209 |-11.906  |54.497             |368                 |344.927           |9                  |161.323         |0       |
+|fpu *                 |19725     |3.68             |-1.208 |-59.335  |23.786             |124                 |4.546             |1                  |19.254          |0       |
+|NV_NVDLA_partition_p*|60698     |0.50             |-0.302 |-1528.167|891.754            |8786                |7209.348          |109                |590.814         |0       |
 
 (Reported by OpenSTA)
 
-
+\* \- These designs are **subject to change** and will be **finalized shortly**.
 
 
 
