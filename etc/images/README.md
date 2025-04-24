@@ -1,1 +1,1 @@
-# Folder to have extras
+# All images regarding the contest is found here.
