@@ -6,7 +6,7 @@ This GitHub repository has the public benchmarks for the 2025 MLCAD CAD Contest 
 
 
 ## Table of Content
-  - [*MLCAD2025-Contest-Problem-Statement.pdf*](./<MLCAD2025-Contest-Problem-Statement.pdf>): Contest description.
+  - [*MLCAD2025-Contest-Problem-Statement.pdf*](./MLCAD2025-Contest-Problem-Statement.pdf): Contest description.
   - [*design*](./designs): Synthesized netlist, floorplan DEF, SDC and the IR tables.
   - [*platform/ASAP7*](./platform/ASAP7): ASAP7 cell library for the designs.
   - [*src*](./src)
