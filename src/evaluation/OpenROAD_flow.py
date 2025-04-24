@@ -62,7 +62,7 @@ def run_flow(design_name):
     # Set paths to library and design files
     libDir = Path("../../platform/ASAP7/lib/")
     lefDir = Path("../../platform/ASAP7/lef/")
-    designDir = Path("../../designs/%s"%design_name)
+    designDir = Path("../../designs/%s/EDA_files/"%design_name)
 
     # Read all liberty (.lib) and LEF files from the library directories
     libFiles = libDir.glob("*.lib")
@@ -159,13 +159,13 @@ def run_evaluation(design, fname):
     design.evalTclString("report_tns > evaluation_temp.txt")
     with open ("evaluation_temp.txt", "r") as file:
       for line in file:
-        tns = float(line.split()[1]) / 1000
+        tns = float(line.split()[-1]) / 1000
     os.remove("evaluation_temp.txt")
     
     design.evalTclString("report_wns > evaluation_temp.txt")
     with open ("evaluation_temp.txt", "r") as file:
       for line in file:
-        wns = float(line.split()[1]) / 1000
+        wns = float(line.split()[-1]) / 1000
     os.remove("evaluation_temp.txt")
 
     slew_viol_count = 0

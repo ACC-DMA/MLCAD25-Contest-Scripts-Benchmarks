@@ -9,7 +9,7 @@ def load_design(design_name, verilog = False):
   tech = Tech()
   libDir = Path("../../platform/ASAP7/lib/")
   lefDir = Path("../../platform/ASAP7/lef/")
-  designDir = Path("../../designs/%s"%design_name)
+  designDir = Path("../../designs/%s/EDA_files/"%design_name)
 
   # Read technology files
   libFiles = libDir.glob('*.lib')
