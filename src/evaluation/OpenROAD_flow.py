@@ -101,17 +101,9 @@ def run_flow(design_name):
     design.evalTclString("source ../../platform/ASAP7/setRC.tcl")
     
     # Configure and run global placement
-    gpl = design.getReplace()
-    gpl.setTimingDrivenMode(False)
-    gpl.setRoutabilityDrivenMode(True)
-    gpl.setUniformTargetDensityMode(True)
-    # Limit initial placement iterations and set density penalty
     print("###run global placement###")
-    gpl.setInitialPlaceMaxIter(10)
-    gpl.setInitDensityPenalityFactor(0.05)
-    gpl.doInitialPlace(threads = 4)
-    gpl.doNesterovPlace(threads = 4)
-    gpl.reset()
+
+    design.evalTclString("global_placement -routability_driven -init_density_penalty 0.05 -initial_place_max_iter 10")
     
     # Run initial detailed placement
     site = design.getBlock().getRows()[0].getSite()
@@ -133,11 +125,15 @@ def run_flow(design_name):
     grt.setMinLayerForClock(clk_low_layer)
     grt.setMaxLayerForClock(clk_high_layer)
     grt.setAdjustment(0.5)
-    grt.setVerbose(False)
+    grt.setVerbose(True)
     print("###run global routing###")
     grt.globalRoute(False)
+
+    #design.evalTclString("set_routing_layers -signal M1-M8 -clock M1-M8")
+    #design.evalTclString("set_global_routing_layer_adjustment * 0.5")
+    #design.evalTclString("global_route -allow_congestion")
     design.evalTclString("estimate_parasitics -global_routing")
-    
+
     fileDir = "./"    
     metrics = run_evaluation(design, fileDir+"gr_results.csv")
     compute_score(*metrics)
