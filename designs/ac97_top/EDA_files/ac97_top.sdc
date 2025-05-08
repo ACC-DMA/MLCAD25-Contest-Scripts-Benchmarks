@@ -1,7 +1,7 @@
 set_cmd_units -time ps -capacitance fF
 
 set_max_fanout 16.000 [current_design]
-create_clock -name clk -period 80.0 [get_ports clk_i]
+create_clock -name clk -period 120.0 [get_ports clk_i]
 
 set_false_path  -from [get_ports {rst_i}]
 set_false_path -to [get_pin */RESETN]

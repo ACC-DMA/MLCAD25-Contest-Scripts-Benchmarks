@@ -31,7 +31,7 @@ set_cmd_units -time ps -capacitance fF
 
 set_clock_gating_check -rise -setup 0
 set_clock_gating_check -fall -setup 0
-create_clock [get_ports {nvdla_core_clk}] -name nvdla_core_clk -period 500 -waveform {0.000000 250.000}
+create_clock [get_ports {nvdla_core_clk}] -name nvdla_core_clk -period 1000 -waveform {0.000000 500.000}
 set_clock_transition  -rise -min 0.1 [get_clocks {nvdla_core_clk}]
 set_clock_transition  -rise -max 0.1 [get_clocks {nvdla_core_clk}]
 set_clock_transition  -fall -min 0.1 [get_clocks {nvdla_core_clk}]
