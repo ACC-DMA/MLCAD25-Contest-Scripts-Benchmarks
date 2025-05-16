@@ -9,16 +9,16 @@ Make sure you have OpenROAD built locally. Run the following command to get the 
   - Default is ASAP7.
 - Add the def file for which the properties has to be generated with the <i>"-def_file"</i> flag.
   - Default is ac97_top_fp.def.gz.
-- Set <i>"-is_fp"</i> flag if you are reading a floorplan stage def.
-  - Default is True.
-- Set <i>"-w"</i> flag to store the IR tables as .csv files.
-  - Default is True.
+- Add the segement route guide file generated after global routing (use grt.writeSegments command) with the <i>"-guide_file"</i> flag. This has to be given only if generating tables for global_route stage. 
+  - Default is segment_route.guide .
+- Give the stage name at which IR tables are being generated using <i>"-stage"</i> flag. Options: floorplan, placement, global_route.
+  - Default is floorplan.
 - Add <i>"-out_dir"</i> flag to provide the output directory path to store the IR tables.
   - Default is IRs folder inside design directory.
 
 ```
 # You can also import the "get_tables_OpenROAD_API" function from the "openroad_helpers.py" Python file to get the pandas DataFrame
-../../OpenROAD/build/src/openroad -python generate_tables.py -d <design name> -def_file <def file path> -w 1 -out_dir <output directory>
+../../OpenROAD/build/src/openroad -python generate_tables.py -d <design name> -def_file <def file path> -out_dir <output directory>
 ```
 
 ## Intermediate file format
