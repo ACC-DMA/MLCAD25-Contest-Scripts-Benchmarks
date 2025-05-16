@@ -3,6 +3,14 @@ This directory contains evaluation scripts for the contest and the evaluation me
 
 
 ## Run evaluation
+Evaluation is broken down into 2 phases.
+### Phase 1: Logic Equivalence Check
+Here you will be checking the logical Equivalence between the netlist provided to you by us(golden version) and the resynthesized-netlist(updated version). You will be using GL0AM to do this. You can learn more about GL0AM [here](https://github.com/NVlabs/GL0AM/tree/mlcad2025_contest_sim). 
+
+
+Note: Remember the resynthesized netlist has to pass the Logic Equivalence Check to be considered for Evaluation Phase 2. 
+
+### Phase 2: Performance improvement over baseline stats.
 (Make sure you have OpenROAD built locally)
 Run the following command to check the correctness of the resynthesis result and get the sample score:
 - Add the name of the corresponding benchmark you want to evaluate with the "-d" flag
