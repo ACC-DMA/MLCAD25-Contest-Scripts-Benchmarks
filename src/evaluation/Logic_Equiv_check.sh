@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-echo "$(pwd)"
+
 cd /app/MLCAD25-Contest-Scripts-Benchmarks/GL0AM/
-echo "$(pwd)"
+
 echo "Enter golden netlist with full path:"
 read golden_netlist_path
 echo "Enter resynthesized netlist with full path:"
