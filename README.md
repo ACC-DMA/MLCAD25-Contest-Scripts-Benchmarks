@@ -34,6 +34,7 @@ The following technique assumes you have docker installed on your machine. You c
 docker build -t <image_name>.
 docker run -it --name <container_name> <image_name>
 ```
+Note: Make sure you are using the latest github repo version.
 
 ### Option 2: Build locally
 The following technique assumes you have a machine with the required Ubuntu OS prerequisite of OpenROAD and CircuitOps.
