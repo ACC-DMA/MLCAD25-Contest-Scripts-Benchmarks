@@ -5,7 +5,20 @@ This directory contains evaluation scripts for the contest and the evaluation me
 ## Run evaluation
 Evaluation is broken down into 2 phases.
 ### Phase 1: Logic Equivalence Check
-Here you will be checking the logical Equivalence between the netlist provided to you by us(golden version) and the resynthesized-netlist(updated version). You will be using GL0AM to do this. You can learn more about GL0AM [here](https://github.com/NVlabs/GL0AM/tree/mlcad2025_contest_sim). 
+Here you will be checking the logical Equivalence between the netlist provided to you by us(golden version) and the resynthesized-netlist(updated version). You will be using GL0AM to do this. You can learn more about GL0AM [here](https://github.com/NVlabs/GL0AM/tree/mlcad2025_contest_sim). This top-level shell script will automate the task for you.
+
+```
+bash Logic_Equiv_check.sh
+```
+#### This will ask you to add the full path to the golden netlist, resynthesized netlist, and top module name of the respective design. See the example below.
+```
+Enter golden netlist with full path:
+app/MLCAD25-Contest-Scripts-Benchmarks/GL0AM/build_gatspi_graph/tests/adder.v
+Enter resynthesized netlist with full path:
+app/MLCAD25-Contest-Scripts-Benchmarks/GL0AM/build_gatspi_graph/tests/adder_altIncorrect.v
+Enter design top name:
+adder
+```
 
 
 Note: Remember the resynthesized netlist has to pass the Logic Equivalence Check to be considered for Evaluation Phase 2. 
