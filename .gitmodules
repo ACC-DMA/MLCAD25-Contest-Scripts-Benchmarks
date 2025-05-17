@@ -4,3 +4,7 @@
 [submodule "OpenROAD"]
 	path = OpenROAD
 	url = https://github.com/vikrg23/OpenROAD.git
+[submodule "GL0AM"]
+	path = GL0AM
+	url = https://github.com/NVlabs/GL0AM.git
+	branch = mlcad2025_contest_sim
