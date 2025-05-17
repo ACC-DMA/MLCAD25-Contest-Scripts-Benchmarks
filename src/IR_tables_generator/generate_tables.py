@@ -21,12 +21,47 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser(description="Options to store the IR tables as .csv files, for a given design name and tech node.")
   parser.add_argument("-d", default="ac97_top", help="Give the design name. Default is ac97_top.")
   parser.add_argument("-t", default="ASAP7", help="Give the technology node. Default is ASAP7.")
-  parser.add_argument("-def_file", default="ac97_top_fp.def.gz",  help="Give the def file to be read. Default is ac97_top_fp.def.gz .")
-  parser.add_argument("-is_fp", default=False, action = 'store_true', help="Set this when the input def is of floorplan stage. Default is False.")
-  parser.add_argument("-w", default=True, action = 'store_true', help="Set this when you want to write the dataframes as csv. Default is True.")
+  parser.add_argument("-def_file", default="ac97_top_fp.def.gz",  help="Give the def file to be read. Relative path from design directory.")
+  parser.add_argument("-guide_file", default="segment_route.guide",  help="Give the segment route guide file generated after global routing. This has to be given only if generating tables for global_route stage. Relative path from design directory.")
+  parser.add_argument("-stage", default="floorplan", help="Provide the stage name for which you are generating the IR tables. Default: floorplan. Options: floorplan, placement, global_route")
   parser.add_argument("-out_dir", default="NaN", help="Provide the output directory path to store IR tables. Default is IRs folder inside design directory.")
   args = parser.parse_args() 
-   
-  IRTables = get_tables_OpenROAD_API("../../", args.def_file, args.is_fp, args.w, True, args.d, args.t, args.out_dir)
+  
+  print(f"Stage: {args.stage}")
+  # Check if design and platform directories exist
+  design_dir = "../../designs/" + args.d + "/EDA_files/" 
+  platform_dir = "../../platform/" + args.t
+  
+  if not os.path.isdir(design_dir):
+    print(f"Error: Design directory does not exist at {design_dir}")
+    os._exit(0)
+  else:
+    print(f"Design directory : {design_dir}")
+
+  if not os.path.isdir(platform_dir):
+    print(f"Error: Platform directory does not exist at {platform_dir}")
+    os._exit(0)
+  else:
+    print(f"Platform directory : {platform_dir}")
+
+  # Check if the def file exists
+  def_path = os.path.abspath(design_dir + '/' + args.def_file)
+  if not os.path.isfile(def_path):
+    print(f"Error: DEF file does not exist at {def_path}")
+    os._exit(0)
+  else:
+    print(f"DEF file : {def_path}")
+
+  guide_path = os.path.abspath(design_dir + '/' + args.guide_file)
+
+  # Check if route guide file exists if stage is 'global_route'
+  if args.stage == "global_route":
+    if not os.path.isfile(guide_path):
+      print(f"Error: Route guide file does not exist at {guide_path}")
+      os._exit(0)
+    else:
+      print(f"Route guide file: {guide_path}")
+
+  IRTables = get_tables_OpenROAD_API("../../", args.def_file, args.guide_file, args.stage, True, args.d, args.t, args.out_dir)
   os._exit(0)
   

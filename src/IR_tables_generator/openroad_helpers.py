@@ -274,22 +274,24 @@ class CircuitOps_Tables:
     
 
 class CircuitOps_File_DIR:
-  def __init__(self, CircuitOps_dir, def_file, is_fp, design, tech, out_dir):
+  def __init__(self, CircuitOps_dir, def_file, stage, seg, design, tech, out_dir):
     ### SET DESIGN ###
     self.DESIGN_NAME = design
     
     ### SET PLATFORM ###
     self.PLATFORM = tech
 
-    ### SET IF FLOORPLAN DEF
-    self.IS_FP = is_fp
+    ### SET STAGE
+    self.STAGE = stage
 
     ### INTERNAL DEFINTIONS: DO NOT MODIFY BELOW ####
     self.CIRCUIT_OPS_DIR = CircuitOps_dir
     self.DESIGN_DIR = self.CIRCUIT_OPS_DIR + "/designs/" + self.DESIGN_NAME + "/EDA_files/"
     self.PLATFORM_DIR = self.CIRCUIT_OPS_DIR + "/platform/" + self.PLATFORM
     self.RCX_RULE = self.CIRCUIT_OPS_DIR + "/platform/" + self.PLATFORM + "/rcx_patterns.rules"
+    self.RC_TCL = self.CIRCUIT_OPS_DIR + "/platform/" + self.PLATFORM + "/setRC.tcl"
     self.DEF_FILE = self.DESIGN_DIR + "/" + def_file
+    self.SEG = self.DESIGN_DIR + "/" + seg
     libDir = Path(self.PLATFORM_DIR + "/lib/")
     lefDir = Path(self.PLATFORM_DIR + "/lef/")
     self.LEF_FILES = lefDir.glob('*.lef')
@@ -370,20 +372,35 @@ def load_design(_CircuitOps_File_DIR):
     tech.readLef(lefFile.as_posix())
   
   design = Design(tech)
-
-  if (_CircuitOps_File_DIR.IS_FP):
+  if (_CircuitOps_File_DIR.STAGE == "floorplan"):
     design.readVerilog(_CircuitOps_File_DIR.NETLIST_FILE)
     design.link(_CircuitOps_File_DIR.DESIGN_NAME)
     design.evalTclString("read_def -floorplan_initialize "+_CircuitOps_File_DIR.DEF_FILE)
+  elif (_CircuitOps_File_DIR.STAGE == "global_route"):
+    design.readDef(_CircuitOps_File_DIR.DEF_FILE)
+    grt = design.getGlobalRouter()
+    grt.readSegments(_CircuitOps_File_DIR.SEG)
+  elif (_CircuitOps_File_DIR.STAGE == "placement"):
+    design.readDef(_CircuitOps_File_DIR.DEF_FILE)
   else:
     design.readDef(_CircuitOps_File_DIR.DEF_FILE)
 
   design.evalTclString("read_sdc " + _CircuitOps_File_DIR.SDC_FILE)  
   design.evalTclString("set_propagated_clock [all_clocks]")
+  design.evalTclString("source " + _CircuitOps_File_DIR.RC_TCL)
   add_global_connection(design, net_name="VDD", pin_pattern="VDD", power=True)
   add_global_connection(design, net_name="VSS", pin_pattern="VSS", ground=True)
   odb.dbBlock.globalConnect(ord.get_db_block())
-  design.evalTclString("extract_parasitics -ext_model_file "+_CircuitOps_File_DIR.RCX_RULE)
+  print("Perform extraction")
+  if (_CircuitOps_File_DIR.STAGE == "floorplan"):
+    design.evalTclString("extract_parasitics -ext_model_file "+_CircuitOps_File_DIR.RCX_RULE)
+  elif (_CircuitOps_File_DIR.STAGE == "global_route"):
+    design.evalTclString("estimate_parasitics -global_routing")
+  elif (_CircuitOps_File_DIR.STAGE == "placement"):
+    design.evalTclString("estimate_parasitics -placement")
+  else:
+    design.evalTclString("extract_parasitics -ext_model_file "+_CircuitOps_File_DIR.RCX_RULE)
+
   return tech, design
 
 def print_cell_property_entry(outfile, cell_props):
@@ -553,9 +570,10 @@ def get_clknets(design):
     clk_nets = [design.evalTclString(x+" getName") for x in clk_nets_ptr]
     return clk_nets
 
-def get_tables_OpenROAD_API(data_root, def_file, is_fp, write_table, return_df, design, tech, out_dir):
-  s1 = time.time()  
-  _CircuitOps_File_DIR = CircuitOps_File_DIR(data_root, def_file, is_fp, design, tech, out_dir)
+def get_tables_OpenROAD_API(data_root, def_file, seg, stage, return_df, design, tech, out_dir):
+  s1 = time.time()
+  write_table = True
+  _CircuitOps_File_DIR = CircuitOps_File_DIR(data_root, def_file, stage, seg, design, tech, out_dir)
   tech_design, design = load_design(_CircuitOps_File_DIR)
   timing = Timing(design)
   log = open(_CircuitOps_File_DIR.OUTPUT_DIR+'/log','w')
