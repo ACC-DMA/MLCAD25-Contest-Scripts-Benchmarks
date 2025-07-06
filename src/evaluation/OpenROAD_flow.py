@@ -134,8 +134,9 @@ def run_flow(design_name):
     #design.evalTclString("global_route -allow_congestion")
     design.evalTclString("estimate_parasitics -global_routing")
 
-    fileDir = "./"    
-    metrics = run_evaluation(design, fileDir+"gr_results.csv")
+    fileDir = "./"  
+    filename = design_name + "_gr_results.csv"
+    metrics = run_evaluation(design, filename)
     compute_score(*metrics)
 
     # Write final DEF file
