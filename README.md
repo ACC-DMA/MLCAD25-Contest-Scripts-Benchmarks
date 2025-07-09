@@ -83,6 +83,21 @@ make -j
 
 (Reported by OpenSTA)
 
+## 🏆 Leaderboard – Alpha Submission (Top Teams per Design)
+
+| Design                     | Top Team(s)       |
+|----------------------------|-------------------|
+| ac97_top                   | Team25            |
+| aes_cipher_top             | Team23 & Team25   |
+| NV_NVDLA_partition_m       | Team23            |
+| fpu                        | Team25            |
+| NV_NVDLA_partition_p       | Team23            |
+| NV_NVDLA_partition_c       | Team25            |
+| Hidden1                    | Team23 & Team25   |
+| Hidden2                    | Team25            |
+| Hidden3                    | Team23            |
+| Hidden4                    | Team23            |
+
 
 
  
