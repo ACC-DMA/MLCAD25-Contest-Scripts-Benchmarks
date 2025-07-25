@@ -857,8 +857,8 @@ def get_tables_OpenROAD_API(data_root, def_file, seg, stage, return_df, design, 
       libcell_dict["libcell_name"] = libcell_name
       libcell_dict["libcell_area"] = libcell_area
 
-      if write_table:
-        print_libcell_property_entry(_CircuitOps_File_DIR.libcell_file, libcell_dict)
+      #if write_table:
+      #  print_libcell_property_entry(_CircuitOps_File_DIR.libcell_file, libcell_dict)
       if return_df:
         _CircuitOps_Tables.append_libcell_property_entry(libcell_dict)
   t_aft_libs_loop = time.time()
