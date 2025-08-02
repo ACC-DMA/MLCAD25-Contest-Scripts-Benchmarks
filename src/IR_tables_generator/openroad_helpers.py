@@ -70,6 +70,22 @@ class CircuitOps_Tables:
                           "input_pin_cap": []
                           }
     self.pin_properties = pd.DataFrame(self.pin_properties)
+    
+    self.port_properties = {"port_name": [],
+                          "net_name": [],
+                          "dir": [],
+                          "is_startpoint": [],
+                          "is_endpoint": [],
+                          "x0": [],
+                          "y0": [],
+                          "x1": [],
+                          "y1": [],
+                          "port_tran": [],
+                          "port_slack": [],
+                          "port_rise_arr": [],
+                          "port_fall_arr": []
+                          }
+    self.port_properties = pd.DataFrame(self.port_properties)
 
     self.net_properties = {"net_name": [],
                           "net_route_length": [],
@@ -159,6 +175,24 @@ class CircuitOps_Tables:
                 }
     pin_entry = pd.DataFrame(pin_entry)
     self.pin_properties = pd.concat([self.pin_properties, pin_entry], ignore_index = True)
+
+  def append_port_property_entry(self, port_props):
+    port_entry = {"port_name": [port_props["port_name"]],
+                "net_name": [port_props["net_name"]],            
+                "is_startpoint": [port_props["is_startpoint"]],
+                "is_endpoint": [port_props["is_endpoint"]],
+                "dir": [port_props["dir"]],
+                "x0": [port_props["x0"]],
+                "y0": [port_props["y0"]],
+                "x1": [port_props["x1"]],
+                "y1": [port_props["y1"]],
+                "port_tran": [port_props["port_tran"]],
+                "port_slack": [port_props["port_slack"]],
+                "port_rise_arr": [port_props["port_rise_arr"]],
+                "port_fall_arr": [port_props["port_fall_arr"]]
+                }
+    port_entry = pd.DataFrame(port_entry)
+    self.port_properties = pd.concat([self.port_properties, port_entry], ignore_index = True)
 
   def append_net_property_entry(self, net_props):
     net_entry = {"net_name": [net_props["net_name"]],
@@ -264,6 +298,7 @@ class CircuitOps_Tables:
     IR_tables["cell_properties"] = self.cell_properties
     IR_tables["libcell_properties"] = self.libcell_properties
     IR_tables["pin_properties"] = self.pin_properties
+    IR_tables["port_properties"] = self.port_properties
     IR_tables["net_properties"] = self.net_properties
     IR_tables["cell_pin_edge"] = self.cell_pin_edge
     IR_tables["net_pin_edge"] = self.net_pin_edge
@@ -311,6 +346,7 @@ class CircuitOps_File_DIR:
     self.cell_file = self.OUTPUT_DIR + "/cell_properties.csv"
     self.design_file = self.OUTPUT_DIR + "/design_properties.csv"
     self.libcell_file = self.OUTPUT_DIR + "/libcell_properties.csv"
+    self.port_file = self.OUTPUT_DIR + "/port_properties.csv"
     self.pin_file = self.OUTPUT_DIR + "/pin_properties.csv"
     self.net_file = self.OUTPUT_DIR + "/net_properties.csv"
     self.cell_pin_file = self.OUTPUT_DIR + "/cell_pin_edge.csv"
@@ -448,41 +484,91 @@ def print_pin_property_entry(outfile, pin_props):
   with open(outfile, "a") as file:
     file.write(final + "\n")
 
+def print_port_property_entry(outfile, port_props):
+  port_entry = []
+  port_entry.append(port_props["port_name"])#port_name
+  port_entry.append(port_props["net_name"])#net_name  
+  port_entry.append(str(port_props["dir"]))#dir  
+  port_entry.append(str(port_props["is_startpoint"]))#is_startpoint
+  port_entry.append(str(port_props["is_endpoint"]))#is_endpoint
+  port_entry.append(str(port_props["x0"]))#x
+  port_entry.append(str(port_props["y0"]))#y  
+  port_entry.append(str(port_props["x1"]))#x
+  port_entry.append(str(port_props["y1"]))#y    
+  port_entry.append(str(port_props["port_tran"]))#port_tran
+  port_entry.append(str(port_props["port_slack"]))#port_slack
+  port_entry.append(str(port_props["port_rise_arr"]))#port_rise_arr
+  port_entry.append(str(port_props["port_fall_arr"]))#port_fall_arr
+  final = ",".join(port_entry)
+  with open(outfile, "a") as file:
+    file.write(final + "\n")
+
 def print_ip_op_cell_pairs(outfile, inputs, outputs):
   with open(outfile, "a") as file:
     for input in inputs:
+      if input == 'NA':
+        continue
       for output in outputs:
+        if output == 'NA':
+          continue
         file.write("{},{},{},{}\n".format(input, output, "cell", "cell"))
 
-def print_ip_op_pairs(outfile, input_pins, output_pins, is_net, corner, design):
+def print_ip_op_pairs(outfile, input_pins, output_pins, is_net, corner, design, block):
   count = 0
   with open(outfile, "a") as file:
     delay = -1
     skip_arc_calc = 0
     for i_p_ in input_pins:
+      pin = block.findITerm(i_p_)
+      if pin == None:
+        in_type = 'port'
+      else:
+        in_type = 'pin'
       for o_p_ in output_pins:
+        pin = block.findITerm(o_p_)
+        if pin == None:
+          out_type = 'port'
+        else:
+          out_type = 'pin'
         if (not skip_arc_calc):
           try:
             delay = get_ip_op_delay(i_p_, o_p_, corner, design)
           except:
             delay = -1
-        file.write("{},{},{},{},{},{}\n".format(i_p_, o_p_, "pin", "pin", is_net, delay))#arc_delays[count]))
+        file.write("{},{},{},{},{},{}\n".format(i_p_, o_p_, in_type, out_type, is_net, delay))
         count += 1
 
+#def get_ip_op_delay(i_p, o_p, corner, design):
+#  input_pin = design.evalTclString("get_pin "+i_p)
+#  output_pin = design.evalTclString("get_pin "+o_p)
+#  arc_delays = []
+#  for from_vertex in design.evalTclString(input_pin+" vertices").split():
+#    for to_vertex in design.evalTclString(output_pin+" vertices").split():
+#      iterv = design.evalTclString(from_vertex+" out_edge_iterator")
+#      while (int(design.evalTclString(iterv+" has_next"))):
+#        edge = design.evalTclString(iterv+" next")
+#        if (design.evalTclString(edge+" to") == to_vertex):
+#          arc_delay = get_arc_delay(edge, corner, design)
+#          arc_delays.append(arc_delay)
+#  if (len(arc_delays) > 0):
+#    arc_delay = max(arc_delays)
+#  else:
+#    arc_delay = -1
+#  return arc_delay
+
 def get_ip_op_delay(i_p, o_p, corner, design):
-  input_pin = design.evalTclString("get_pin "+i_p)
-  output_pin = design.evalTclString("get_pin "+o_p)
+  edges = design.evalTclString("get_timing_edge -from "+i_p+" -to "+o_p).split()
   arc_delays = []
-  for from_vertex in design.evalTclString(input_pin+" vertices").split():
-    for to_vertex in design.evalTclString(output_pin+" vertices").split():
-      iterv = design.evalTclString(from_vertex+" out_edge_iterator")
-      while (int(design.evalTclString(iterv+" has_next"))):
-        edge = design.evalTclString(iterv+" next")
-        if (design.evalTclString(edge+" to") == to_vertex):
-          arc_delay = get_arc_delay(edge, corner, design)
-          arc_delays.append(arc_delay)
+
+  for edge in edges:
+    delay_max_fall = design.evalTclString("get_property "+edge+" delay_max_fall")
+    arc_delays.append(delay_max_fall)
+    delay_max_rise = design.evalTclString("get_property "+edge+" delay_max_rise")
+    arc_delays.append(delay_max_rise)
+
   if (len(arc_delays) > 0):
-    arc_delay = max(arc_delays)
+    arc_delay = float(max(arc_delays))
+    arc_delay  = arc_delay*1e-12
   else:
     arc_delay = -1
   return arc_delay
@@ -552,6 +638,12 @@ def get_startpoints(design):
             start_point_inst_name = design.evalTclString("["+start_point_pin+" getInst] getName")
             start_point_mterm_name = design.evalTclString("["+start_point_pin+" getMTerm] getName")
             start_points.append(start_point_inst_name+"/"+start_point_mterm_name)
+        else:
+            start_point_pin = design.evalTclString("sta::sta_to_db_port [sta::sta_pin_to_port "+sp+"]")
+            start_point_mterm_name = design.evalTclString(start_point_pin+" getName")
+            start_points.append(start_point_mterm_name)
+
+
     return start_points
 
 def get_registers(design):
@@ -583,11 +675,13 @@ def get_tables_OpenROAD_API(data_root, def_file, seg, stage, return_df, design, 
   tech = ord.get_db_tech()
   insts = block.getInsts()
   nets = block.getNets()
+  ports = block.getBTerms()
   ###########################
   #get default design corner#
   ###########################
   corner = timing.getCorners()[0]
   startpoints = get_startpoints(design)
+  #print(startpoints)
   registers = get_registers(design)
   corner_sta = design.evalTclString("sta::cmd_corner")
   clk_nets = get_clknets(design)
@@ -613,7 +707,8 @@ def get_tables_OpenROAD_API(data_root, def_file, seg, stage, return_df, design, 
     header = "pin_name,x,y,is_in_clk,is_port,is_startpoint,is_endpoint,dir,maxcap,maxtran,num_reachable_endpoint,cell_name,net_name,pin_tran,pin_slack,pin_rise_arr,pin_fall_arr,input_pin_cap"
     with open(_CircuitOps_File_DIR.pin_file, "w") as file:
       file.write(header + "\n")
-
+    with open(_CircuitOps_File_DIR.port_file, "w") as file:
+      file.write("port_name,net_name,dir,is_startpoint,is_endpoint,x0,y0,x1,y1,tran,slack,rise_arr,fall_arr\n")
     with open(_CircuitOps_File_DIR.cell_pin_file, "w") as file:
       file.write("src,tar,src_type,tar_type\n")
     with open(_CircuitOps_File_DIR.cell_net_file, "w") as file:
@@ -750,7 +845,7 @@ def get_tables_OpenROAD_API(data_root, def_file, seg, stage, return_df, design, 
     ##########################
     if (is_macro == 0 and is_seq == 0):
       if write_table:
-        print_ip_op_pairs(_CircuitOps_File_DIR.pin_pin_file, input_pins, output_pins, 0, corner_sta, design)
+        print_ip_op_pairs(_CircuitOps_File_DIR.pin_pin_file, input_pins, output_pins, 0, corner_sta, design, block)
       if return_df:
         _CircuitOps_Tables.append_ip_op_pairs(input_pins, output_pins, 0)
   t_aft_insts_loop = time.time()
@@ -761,6 +856,34 @@ def get_tables_OpenROAD_API(data_root, def_file, seg, stage, return_df, design, 
 
     with open(_CircuitOps_File_DIR.net_pin_file, "w") as file:
       file.write("src,tar,src_type,tar_type\n")
+
+  ############################################
+  #iterate through each port#
+  ############################################
+  port_dict = {}
+  for port in ports:
+    port_name = port.getName()
+    if (port.getNet() != "NULL"):
+      port_net_name = port.getNet().getName()
+    else:
+      continue
+  
+    if port.getNet().getSigType() != 'POWER' and port.getNet().getSigType() != 'GROUND':
+      port_dict['port_name'] = port_name
+      port_dict['net_name'] = port_net_name
+      port_dict['dir'] = port.getIoType()
+      BBox = port.getBBox()
+      port_dict['x0'] = BBox.xMin()
+      port_dict['y0'] = BBox.yMin()
+      port_dict['x1'] = BBox.xMax()
+      port_dict['y1'] = BBox.yMax()
+      port_dict["is_endpoint"] = 1 if timing.isEndpoint(port) else 0
+      port_dict["is_startpoint"] = 1 if port_name in startpoints else 0
+      port_dict["port_tran"] = timing.getPinSlew(port)
+      port_dict["port_slack"] = min(timing.getPinSlack(port, timing.Fall, timing.Max), timing.getPinSlack(port, timing.Rise, timing.Max))
+      port_dict["port_rise_arr"] = timing.getPinArrival(port, timing.Rise)
+      port_dict["port_fall_arr"] = timing.getPinArrival(port, timing.Fall)
+      print_port_property_entry(_CircuitOps_File_DIR.port_file, port_dict)
 
   ######################
   #iterate through nets#
@@ -807,6 +930,27 @@ def get_tables_OpenROAD_API(data_root, def_file, seg, stage, return_df, design, 
           input_pins.append(ITerm_name)
           input_cells.append(cell_ITerm_name)
 
+      net_BTerms = net.getBTerms()
+      for BTerm in net_BTerms:
+        BTerm_name = BTerm.getName()
+        port_direction = BTerm.getIoType()
+        if (port_direction == "OUTPUT"):
+          if write_table:
+            with open(_CircuitOps_File_DIR.net_pin_file, "a") as file:
+              file.write("{},{},{},{}\n".format(net_name, BTerm_name, "net", "port"))
+          if return_df:
+            _CircuitOps_Tables.append_net_pin_edge(net_name, BTerm_name, True)
+          output_pins.append(BTerm_name)
+          output_cells.append('NA')
+        elif (port_direction == "INPUT"):
+          if write_table:
+            with open(_CircuitOps_File_DIR.net_pin_file, "a") as file:
+              file.write("{},{},{},{}\n".format(BTerm_name, net_name, "port", "net"))
+          if return_df:
+            _CircuitOps_Tables.append_net_pin_edge(BTerm_name, net_name, False)
+          input_pins.append(BTerm_name)
+          input_cells.append('NA')
+
       net_dict["net_name"] = net_name
       net_dict["net_cap"] = net_cap
       net_dict["net_res"] = net_res
@@ -825,7 +969,7 @@ def get_tables_OpenROAD_API(data_root, def_file, seg, stage, return_df, design, 
       #################################################
       if write_table:
         print_ip_op_cell_pairs(_CircuitOps_File_DIR.cell_cell_file, input_cells, output_cells)
-        print_ip_op_pairs(_CircuitOps_File_DIR.pin_pin_file, input_pins, output_pins, 1, corner_sta, design)
+        print_ip_op_pairs(_CircuitOps_File_DIR.pin_pin_file, input_pins, output_pins, 1, corner_sta, design, block)
       if return_df:
         _CircuitOps_Tables.append_ip_op_cell_pairs(input_cells, output_cells)
         _CircuitOps_Tables.append_ip_op_pairs(input_pins, output_pins, 1)
