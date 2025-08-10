@@ -31,13 +31,13 @@ set_cmd_units -time ps -capacitance fF
 
 set_clock_gating_check -rise -setup 0
 set_clock_gating_check -fall -setup 0
-create_clock [get_ports {nvdla_core_clk}] -name nvdla_core_clk -period 500 -waveform {0.000000 250.000}
+create_clock [get_ports {nvdla_core_clk}] -name nvdla_core_clk -period 1200 -waveform {0.000000 600.000}
 set_clock_transition  -rise -min 0.1 [get_clocks {nvdla_core_clk}]
 set_clock_transition  -rise -max 0.1 [get_clocks {nvdla_core_clk}]
 set_clock_transition  -fall -min 0.1 [get_clocks {nvdla_core_clk}]
 set_clock_transition  -fall -max 0.1 [get_clocks {nvdla_core_clk}]
 set_wire_load_mode enclosed
-set_false_path  -from [get_ports {tmc2slcg_disable_clock_gating test_mode nvdla_clk_ovr_on global_clk_ovr_on dla_reset_rstn direct_reset_}]
+set_false_path  -from [get_ports {tmc2slcg_disable_clock_gating test_mode nvdla_clk_ovr_on global_clk_ovr_on dla_reset_rstn direct_reset_ pwrbus_ram_pd*}]
 set_false_path -to [get_pin */RESETN]
 set_false_path -to [get_pin */SETN]
 set_ideal_network  [get_ports {global_clk_ovr_on}]
@@ -47,6 +47,7 @@ set_ideal_network  [get_ports {dla_reset_rstn}]
 set_ideal_network  [get_ports {nvdla_core_clk}]
 set_ideal_network  [get_ports {nvdla_clk_ovr_on}]
 set_ideal_network  [get_ports {tmc2slcg_disable_clock_gating}]
+set_ideal_network  [get_ports {pwrbus_ram_pd*}]
 
 set_max_fanout 128 [current_design]
 
